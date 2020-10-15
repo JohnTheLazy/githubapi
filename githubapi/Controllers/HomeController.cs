@@ -16,7 +16,7 @@ namespace githubapi.Controllers
         {
         }
 
-        [HttpGet, HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Index()
         {
             if (Request.Query.ContainsKey("q"))

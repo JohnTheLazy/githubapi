@@ -30,7 +30,7 @@ namespace githubapi.Controllers.v1
             return $"{method}-{param}";
         }
 
-        [HttpGet, HttpPost]
+        [HttpPost]
         [Route("retrieveUsers")]
         public async Task<ActionResult<List<GitHubUser>>> RetrieveUsers(List<string> userNames)
         {
