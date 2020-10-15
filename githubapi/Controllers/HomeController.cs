@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using githubapi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using githubapi.Models; 
-using System.Net.Http;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace githubapi.Controllers
 {
@@ -26,6 +24,8 @@ namespace githubapi.Controllers
                 string q = Request.Query["q"].ToString().ToLower();
                 List<string> userNames = q.Split(',').Select(x => x.Trim()).ToList();
 
+                DateTime startDate = DateTime.Now;
+
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response =
@@ -38,9 +38,19 @@ namespace githubapi.Controllers
                     byte[] buffer = await response.Content.ReadAsByteArrayAsync();
                     byte[] byteArray = buffer.ToArray();
                     string content = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
-                    List<GitHubUser> users = JsonConvert.DeserializeObject<List<GitHubUser>>(content);
+                    List<GitHubUser> users = new List<GitHubUser>();
+                    try
+                    {
+                        users = JsonConvert.DeserializeObject<List<GitHubUser>>(content);
+                    }
+                    catch
+                    {
+                    }
                     ViewBag.Result = users;
                 }
+
+                TimeSpan speed = DateTime.Now - startDate;
+                ViewBag.Speed = speed;
             }
 
             return View();
