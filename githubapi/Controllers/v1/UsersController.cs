@@ -32,7 +32,7 @@ namespace githubapi.Controllers.v1
 
         [HttpPost]
         [Route("retrieveUsers")]
-        public async Task<ActionResult<List<GitHubUser>>> RetrieveUsers(List<string> userNames)
+        public async Task<ActionResult<List<GitHubUser>>> RetrieveUsers([FromBody] List<string> userNames)
         {
             List<GitHubUser> results = new List<GitHubUser>();
 

@@ -26,13 +26,13 @@ namespace githubapi.Controllers
 
                 DateTime startDate = DateTime.Now;
 
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new ClientProvider().Client)
                 {
-                    string requestUri = "http://localhost:2685/v1/users/retrieveUsers";
-                    HttpResponseMessage response =await client.PostAsync(requestUri,
-                            new StringContent(JsonConvert.SerializeObject(userNames),
-                            Encoding.UTF8,
-                            "application/json"));
+                    string requestUri = "/v1/users/retrieveUsers";
+                    HttpResponseMessage response = await client.PostAsync(requestUri,
+                        new StringContent(JsonConvert.SerializeObject(userNames),
+                        Encoding.UTF8,
+                        "application/json"));
 
                     byte[] buffer = await response.Content.ReadAsByteArrayAsync();
                     byte[] byteArray = buffer.ToArray();
