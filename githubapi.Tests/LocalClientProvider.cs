@@ -4,10 +4,10 @@ using System.Net.Http;
 
 namespace githubapi.Tests
 {
-    public class ClientProvider
+    public class LocalClientProvider
     {
         public HttpClient Client { get; private set; }
-        public ClientProvider()
+        public LocalClientProvider()
         {
             TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
             Client = server.CreateClient();

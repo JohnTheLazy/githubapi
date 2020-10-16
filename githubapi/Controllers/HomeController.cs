@@ -16,7 +16,7 @@ namespace githubapi.Controllers
         {
         }
 
-        [HttpPost]
+        [HttpGet, HttpPost]
         public async Task<IActionResult> Index()
         {
             if (Request.Query.ContainsKey("q"))
@@ -28,9 +28,8 @@ namespace githubapi.Controllers
 
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response =
-                        await client.PostAsync(
-                            "http://localhost:2685/v1/users/retrieveUsers",
+                    string requestUri = "http://localhost:2685/v1/users/retrieveUsers";
+                    HttpResponseMessage response =await client.PostAsync(requestUri,
                             new StringContent(JsonConvert.SerializeObject(userNames),
                             Encoding.UTF8,
                             "application/json"));

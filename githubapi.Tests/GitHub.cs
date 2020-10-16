@@ -17,9 +17,10 @@ namespace githubapi.Tests
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("User-Agent", "githubapi");
 
-                using (HttpResponseMessage response = await client.GetAsync("https://api.github.com/users/test"))
+                string userName = "test";
+                using (HttpResponseMessage response = await client.GetAsync($"https://api.github.com/users/{userName}"))
                 {
-                    response.EnsureSuccessStatusCode(); 
+                    response.EnsureSuccessStatusCode();
                     actual = response.StatusCode;
                 }
             }

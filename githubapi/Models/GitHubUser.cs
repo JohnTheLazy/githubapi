@@ -2,11 +2,11 @@
 {
     public class GitHubUser
     {
-        public string name { get; set; }
-        public string login { get; set; }
-        public string company { get; set; }
-        public int followers { get; set; }
-        public int public_repos { get; set; }
-        public int average_followers { get => followers / public_repos; }
+        public string Name { get; set; }
+        public string Login { get; set; }
+        public string Company { get; set; }
+        public int Followers { get; set; }
+        public int Public_Repos { get; set; }
+        public int Average_Followers { get => Public_Repos > 0 ? Followers / Public_Repos : 0; }
     }
 }

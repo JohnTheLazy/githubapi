@@ -15,9 +15,12 @@ namespace githubapi.Tests
         {
             HttpStatusCode actual;
 
-            using (HttpClient client = new ClientProvider().Client)
+            using (HttpClient client = new LocalClientProvider().Client)
             {
-                List<string> userNames = new List<string>();
+                List<string> userNames = new List<string>
+                {
+                    "test"
+                };
                 string content = JsonConvert.SerializeObject(userNames);
                 using (StringContent stringContent = new StringContent(content, Encoding.UTF8, "application/json"))
                 {

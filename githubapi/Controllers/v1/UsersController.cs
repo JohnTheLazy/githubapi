@@ -47,30 +47,27 @@ namespace githubapi.Controllers.v1
                 }
                 else
                 {
-                    using (HttpClient client = new HttpClient())
-                    {
-                        client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                        client.DefaultRequestHeaders.Add("User-Agent", "githubapi");
+                    using HttpClient client = new HttpClient();
+                    client.BaseAddress = new Uri("https://api.github.com");
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("User-Agent", "githubapi");
 
-                        using (HttpResponseMessage response = await client.GetAsync($"https://api.github.com/users/{userName}"))
-                        {
-                            if (response.StatusCode == HttpStatusCode.OK)
-                            {
-                                byte[] buffer = await response.Content.ReadAsByteArrayAsync();
-                                byte[] byteArray = buffer.ToArray();
-                                string content = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
-                                result = JsonConvert.DeserializeObject<GitHubUser>(content);
-                                results.Add(result);
-                                _cache.Set(key, result, _cacheOptions);
-                            }
-                        }
+                    using HttpResponseMessage response = await client.GetAsync($"/users/{userName}");
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        byte[] buffer = await response.Content.ReadAsByteArrayAsync();
+                        byte[] byteArray = buffer.ToArray();
+                        string content = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
+                        result = JsonConvert.DeserializeObject<GitHubUser>(content);
+                        results.Add(result);
+                        _cache.Set(key, result, _cacheOptions);
                     }
                 }
             }
 
             if (results.Any())
             {
-                results = results.OrderBy(x => x.name).ToList();
+                results = results.OrderBy(x => x.Name).ToList();
             }
 
             return results;
