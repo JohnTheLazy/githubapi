@@ -1,14 +1,14 @@
-﻿using System;
+﻿using githubapi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using githubapi.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace githubapi.Controllers.v1
 {
@@ -16,30 +16,57 @@ namespace githubapi.Controllers.v1
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet, HttpPost]
-        [Route("retrieveUsers")]
-        public async Task<ActionResult<List<GitHubUser>>> RetrieveUsers(List<string> userNames)
+        private IMemoryCache _cache;
+        private MemoryCacheEntryOptions _cacheOptions;
+
+        public UsersController(IMemoryCache memoryCache)
         {
-            List<GitHubUser> users = new List<GitHubUser>();
+            _cache = memoryCache;
+            _cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(2));
+        }
 
-            using (HttpClient client = new HttpClient())
+        private string GetKey(string method, string param)
+        {
+            return $"{method}-{param}";
+        }
+
+        [HttpPost]
+        [Route("retrieveUsers")]
+        public async Task<ActionResult<List<GitHubUser>>> RetrieveUsers([FromBody] List<string> userNames)
+        {
+            List<GitHubUser> results = new List<GitHubUser>();
+
+            foreach (string userName in userNames)
             {
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Add("User-Agent", "GitHubUsers");
+                string key = GetKey("RetrieveUsers", userName);
+                GitHubUser result = _cache.Get<GitHubUser>(key);
 
-                HttpResponseMessage response = await client.GetAsync($"https://api.github.com/users/{userNames.FirstOrDefault()}");
-
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (result != null)
                 {
-                    byte[] buffer = await response.Content.ReadAsByteArrayAsync();
-                    byte[] byteArray = buffer.ToArray();
-                    string content = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
-                    GitHubUser user = JsonConvert.DeserializeObject<GitHubUser>(content);
-                    users.Add(user);
+                    results.Add(result);
+                }
+                else
+                {
+                    using HttpClient client = new GitHubClientProvider().Client;
+                    using HttpResponseMessage response = await client.GetAsync($"/users/{userName}");
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        byte[] buffer = await response.Content.ReadAsByteArrayAsync();
+                        byte[] byteArray = buffer.ToArray();
+                        string content = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
+                        result = JsonConvert.DeserializeObject<GitHubUser>(content);
+                        results.Add(result);
+                        _cache.Set(key, result, _cacheOptions);
+                    }
                 }
             }
 
-            return users;
+            if (results.Any())
+            {
+                results = results.OrderBy(x => x.Name).ToList();
+            }
+
+            return results;
         }
     }
 }

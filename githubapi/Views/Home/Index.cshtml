@@ -1,26 +1,56 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
-<br />
+<br />. 
 <div class="row">
     <div class="col-md-12">
         <form>
-            @if (ViewBag.Result != null)
-            {
-                List<GitHubUser> userDetails = ViewBag.Result as List<GitHubUser>;
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <strong>@userDetails.Count</strong>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Type GitHub usernames (comma-separated)" name="q" value="@Context.Request.Query["q"]" />
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit">Search</button>
                 </div>
             </div>
+            @if (ViewBag.Result != null)
+            {
+                List<GitHubUser> userDetails = ViewBag.Result as List<GitHubUser>;
+
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>@userDetails.Count</strong> <span>(@string.Format(@"{0:s\:fff} seconds", ViewBag.Speed))</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @if (userDetails.Any())
+                {
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Login</th>
+                                <th>Company</th>
+                                <th>Followers</th>
+                                <th>Public Repositories</th>
+                                <th>Average Followers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (GitHubUser item in userDetails)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.Login</td>
+                                    <td>@item.Company</td>
+                                    <td>@item.Followers</td>
+                                    <td>@item.Public_Repos</td>
+                                    <td>@item.Average_Followers</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
         </form>
     </div>
 </div>

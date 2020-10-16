@@ -5,3 +5,5 @@
 /.vs/githubapi
 /githubapi/bin
 /githubapi/obj
+/githubapi.Tests/bin
+/githubapi.Tests/obj

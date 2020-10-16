@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace githubapi.Models
+﻿namespace githubapi.Models
 {
     public class GitHubUser
     {
-        public string login { get; set; }
-        public string name { get; set; }
-        public string company { get; set; }
-        public string public_repos { get; set; }
-        public string followers { get; set; }
+        public string Name { get; set; }
+        public string Login { get; set; }
+        public string Company { get; set; }
+        public int Followers { get; set; }
+        public int Public_Repos { get; set; }
+        public int Average_Followers { get => Public_Repos > 0 ? Followers / Public_Repos : 0; }
     }
 }
