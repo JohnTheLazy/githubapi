@@ -12,17 +12,12 @@ namespace githubapi.Tests
         {
             HttpStatusCode actual;
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new Controllers.GitHubClientProvider().Client)
             {
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Add("User-Agent", "githubapi");
-
                 string userName = "test";
-                using (HttpResponseMessage response = await client.GetAsync($"https://api.github.com/users/{userName}"))
-                {
-                    response.EnsureSuccessStatusCode();
-                    actual = response.StatusCode;
-                }
+                using HttpResponseMessage response = await client.GetAsync($"/users/{userName}");
+                response.EnsureSuccessStatusCode();
+                actual = response.StatusCode;
             }
 
             Assert.Equal(HttpStatusCode.OK, actual);

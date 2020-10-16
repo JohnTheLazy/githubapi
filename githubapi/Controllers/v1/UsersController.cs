@@ -47,11 +47,7 @@ namespace githubapi.Controllers.v1
                 }
                 else
                 {
-                    using HttpClient client = new HttpClient();
-                    client.BaseAddress = new Uri("https://api.github.com");
-                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("User-Agent", "githubapi");
-
+                    using HttpClient client = new GitHubClientProvider().Client;
                     using HttpResponseMessage response = await client.GetAsync($"/users/{userName}");
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
