@@ -19,6 +19,13 @@ namespace githubapi.Controllers.v1
         private IMemoryCache _cache;
         private MemoryCacheEntryOptions _cacheOptions;
 
+        /// <summary>
+        /// Get a user
+        /// Provides publicly available information about someone with a GitHub account.
+        /// https://docs.github.com/en/rest/reference/users
+        /// </summary>
+        private readonly string _endPoint = "/users";
+
         public UsersController(IMemoryCache memoryCache)
         {
             _cache = memoryCache;
@@ -48,7 +55,7 @@ namespace githubapi.Controllers.v1
                 else
                 {
                     using HttpClient client = new GitHubClientProvider().Client;
-                    using HttpResponseMessage response = await client.GetAsync($"/users/{userName}");
+                    using HttpResponseMessage response = await client.GetAsync($"{_endPoint}/{userName}");
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         byte[] buffer = await response.Content.ReadAsByteArrayAsync();
